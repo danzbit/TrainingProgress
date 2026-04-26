@@ -1,0 +1,258 @@
+services:
+  client:
+    image: client
+    container_name: client
+    build:
+      context: ./TrainingProgressSystem.Client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      bff:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+    networks:
+      - internal
+
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    container_name: aspire-dashboard
+    ports:
+      - "18888:18888"
+    networks:
+      - internal
+    
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - internal
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SQLSERVER_SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks:
+      - internal
+
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      MSSQL_SA_PASSWORD: ${SQLSERVER_SA_PASSWORD}
+    command: >
+      /bin/bash -c '/opt/mssql-tools18/bin/sqlcmd -C -S sqlserver -U sa -P "$$MSSQL_SA_PASSWORD" -Q "IF DB_ID('"'"'TrainingProgressSystemDB'"'"') IS NULL CREATE DATABASE [TrainingProgressSystemDB];"'
+    restart: "no"
+    networks:
+      - internal
+        
+  bff:
+    image: bff
+    container_name: bff
+    build:
+      context: ./TrainingProgressSystem.Server
+      dockerfile: src/Bff/Bff.Api/Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      training-service:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+      analytics-service:
+        condition: service_healthy
+      ai-chat-service:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      TRAINING_SERVICE_URL: http://training-service:80
+      NOTIFICATION_SERVICE_URL: http://notification-service:80
+      AUTH_SERVICE_URL: http://auth-service:80
+      ANALYTICS_SERVICE_URL: http://analytics-service:80
+      AI_CHAT_SERVICE_URL: http://ai-chat-service:80
+      TRAINING_SERVICE_GRPC_URL: http://training-service:8081
+      ANALYTICS_SERVICE_GRPC_URL: http://analytics-service:8081
+      NOTIFICATION_SERVICE_GRPC_URL: http://notification-service:8081
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889/
+      Redis__ConnectionString: redis:6379
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - internal
+
+  training-service:
+    image: training-service
+    container_name: training-service
+    build:
+      context: ./TrainingProgressSystem.Server
+      dockerfile: src/TrainingService/TrainingService.Api/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      sqlserver-init:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      Kestrel__Endpoints__Http__Url: http://+:80
+      Kestrel__Endpoints__Grpc__Url: http://+:8081
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TrainingProgressSystemDB;User Id=sa;Password=${SQLSERVER_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889/
+      Redis__ConnectionString: redis:6379
+      BFF_URL: http://bff:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - internal
+
+  notification-service:
+    image: notification-service
+    container_name: notification-service
+    build:
+      context: ./TrainingProgressSystem.Server
+      dockerfile: src/NotificationService/NotificationService.Api/Dockerfile
+    ports:
+      - "5002:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      sqlserver-init:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      Kestrel__Endpoints__Http__Url: http://+:80
+      Kestrel__Endpoints__Grpc__Url: http://+:8081
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TrainingProgressSystemDB;User Id=sa;Password=${SQLSERVER_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889/
+      Redis__ConnectionString: redis:6379
+      BFF_URL: http://bff:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - internal
+
+  auth-service:
+    image: auth-service
+    container_name: auth-service
+    build:
+      context: ./TrainingProgressSystem.Server
+      dockerfile: src/AuthService/AuthService.Api/Dockerfile
+    ports:
+      - "5003:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      sqlserver-init:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TrainingProgressSystemDB;User Id=sa;Password=${SQLSERVER_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889/      
+      Redis__ConnectionString: redis:6379
+      BFF_URL: http://bff:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - internal
+
+  analytics-service:
+    image: analytics-service
+    container_name: analytics-service
+    build:
+      context: ./TrainingProgressSystem.Server
+      dockerfile: src/AnalyticsService/AnalyticsService.Api/Dockerfile
+    ports:
+      - "5004:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      sqlserver-init:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      Kestrel__Endpoints__Http__Url: http://+:80
+      Kestrel__Endpoints__Grpc__Url: http://+:8081
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TrainingProgressSystemDB;User Id=sa;Password=${SQLSERVER_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889/
+      Redis__ConnectionString: redis:6379
+      BFF_URL: http://bff:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - internal
+
+  ai-chat-service:
+    image: ai-chat-service
+    container_name: ai-chat-service
+    build:
+      context: ./TrainingProgressSystem.Server
+      dockerfile: src/AiChatService/AiChatService.Api/Dockerfile
+    ports:
+      - "5005:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      sqlserver-init:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      Kestrel__Endpoints__Http__Url: http://+:80
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TrainingProgressSystemDB;User Id=sa;Password=${SQLSERVER_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889/
+      Redis__ConnectionString: redis:6379
+      BFF_URL: http://bff:80
+      GROQ_API_KEY: ${GROQ_API_KEY}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - internal
+
+networks:
+  internal:
+
+volumes:
+  sqlserver-data:

@@ -1,0 +1,51 @@
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Node
+node_modules/
+npm-debug.log
+npm-error.log
+dist/
+build/
+.next/
+
+# .NET / C#
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+.vs/
+.vscode/
+*.csproj.user
+*.sln.DotSettings.user
+
+# Docker
+.docker/
+Dockerfile.dev
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
