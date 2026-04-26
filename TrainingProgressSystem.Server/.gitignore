@@ -1,0 +1,50 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+out/
+artifacts/
+publish/
+
+# Test and coverage artifacts
+TestResults/
+coverage/
+coverage-*/
+*.coverage
+*.coveragexml
+
+# NuGet packages and symbols
+*.nupkg
+*.snupkg
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+*.csproj.user
+
+# Visual Studio / VS Code / Rider
+.vs/
+.vscode/
+.idea/
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+
+# Frontend package folders
+node_modules/
+
+# Local environment and overrides
+.env
+.env.*
+appsettings.Local.json
+appsettings.*.local.json
+docker-compose.override.yml
+
+# OS-generated files
+Thumbs.db
+Desktop.ini

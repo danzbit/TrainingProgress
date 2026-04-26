@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+option csharp_namespace = "Shared.Grpc.Contracts";
+
+package bffsync.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service TrainingSyncGrpc {
+  rpc CreateWorkout (CreateWorkoutGrpcRequest) returns (CreateWorkoutGrpcResponse);
+  rpc SaveGoal (SaveGoalGrpcRequest) returns (SaveGoalGrpcResponse);
+  rpc DeleteWorkout (DeleteWorkoutGrpcRequest) returns (DeleteWorkoutGrpcResponse);
+  rpc DeleteGoal (DeleteGoalGrpcRequest) returns (DeleteGoalGrpcResponse);
+  rpc UpdateGoalsForWorkout (UpdateGoalsForWorkoutGrpcRequest) returns (UpdateGoalsForWorkoutGrpcResponse);
+  rpc RecalculateProgressForGoal (RecalculateProgressForGoalGrpcRequest) returns (RecalculateProgressForGoalGrpcResponse);
+}
+
+service AnalyticsSyncGrpc {
+  rpc RecalculateForWorkout (RecalculateForWorkoutGrpcRequest) returns (RecalculateForWorkoutGrpcResponse);
+}
+
+service NotificationSyncGrpc {
+  rpc ResetRemindersForWorkout (ResetRemindersForWorkoutGrpcRequest) returns (ResetRemindersForWorkoutGrpcResponse);
+  rpc ScheduleRemindersForGoal (ScheduleRemindersForGoalGrpcRequest) returns (ScheduleRemindersForGoalGrpcResponse);
+}
+
+message CreateWorkoutExerciseGrpcRequest {
+  string exercise_id = 1;
+  string exercise_type_id = 2;
+  int32 sets = 3;
+  int32 reps = 4;
+  int32 duration_sec = 5;
+  double weight_kg = 6;
+  bool has_exercise_id = 7;
+  bool has_duration_sec = 8;
+  bool has_weight_kg = 9;
+}
+
+message CreateWorkoutGrpcRequest {
+  string user_id = 1;
+  google.protobuf.Timestamp date = 2;
+  string workout_type_id = 3;
+  int32 duration_min = 4;
+  string notes = 5;
+  repeated CreateWorkoutExerciseGrpcRequest exercises = 6;
+  bool has_duration_min = 7;
+}
+
+message CreateWorkoutGrpcResponse {
+  string workout_id = 1;
+  bool is_success = 2;
+  string error = 3;
+}
+
+message SaveGoalGrpcRequest {
+  string user_id = 1;
+  string name = 2;
+  string description = 3;
+  int32 metric_type = 4;
+  int32 period_type = 5;
+  int32 target_value = 6;
+  google.protobuf.Timestamp start_date = 7;
+  google.protobuf.Timestamp end_date = 8;
+  bool has_end_date = 9;
+}
+
+message SaveGoalGrpcResponse {
+  string goal_id = 1;
+  bool is_success = 2;
+  string error = 3;
+}
+
+message DeleteWorkoutGrpcRequest {
+  string workout_id = 1;
+}
+
+message DeleteWorkoutGrpcResponse {
+  bool is_success = 1;
+  string error = 2;
+}
+
+message DeleteGoalGrpcRequest {
+  string goal_id = 1;
+}
+
+message DeleteGoalGrpcResponse {
+  bool is_success = 1;
+  string error = 2;
+}
+
+message UpdateGoalsForWorkoutGrpcRequest {
+  string user_id = 1;
+  string workout_id = 2;
+}
+
+message UpdateGoalsForWorkoutGrpcResponse {
+  bool is_success = 1;
+  string error = 2;
+}
+
+message RecalculateForWorkoutGrpcRequest {
+  string user_id = 1;
+  string workout_id = 2;
+}
+
+message RecalculateForWorkoutGrpcResponse {
+  bool is_success = 1;
+  string error = 2;
+}
+
+message ResetRemindersForWorkoutGrpcRequest {
+  string user_id = 1;
+  string workout_id = 2;
+}
+
+message ResetRemindersForWorkoutGrpcResponse {
+  bool is_success = 1;
+  string error = 2;
+}
+
+message ScheduleRemindersForGoalGrpcRequest {
+  string user_id = 1;
+  string goal_id = 2;
+}
+
+message ScheduleRemindersForGoalGrpcResponse {
+  bool is_success = 1;
+  string error = 2;
+}
+
+message RecalculateProgressForGoalGrpcRequest {
+  string user_id = 1;
+  string goal_id = 2;
+}
+
+message RecalculateProgressForGoalGrpcResponse {
+  bool is_success = 1;
+  string error = 2;
+}

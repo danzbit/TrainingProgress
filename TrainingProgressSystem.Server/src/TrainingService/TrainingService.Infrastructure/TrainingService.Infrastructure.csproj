@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Configurations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\TrainingService.Domain\TrainingService.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\20260315213000_GoalSqlOptimizations\20260315203657_GoalSqlOptimizations.Up.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.GoalSqlOptimizations.20260315203657_GoalSqlOptimizations.Up.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260315213000_GoalSqlOptimizations\20260315203657_GoalSqlOptimizations.Down.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.GoalSqlOptimizations.20260315203657_GoalSqlOptimizations.Down.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260406091000_RecalculateGoalsProgress\20260406091000_RecalculateGoalsProgress.Up.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.RecalculateGoalsProgress.20260406091000_RecalculateGoalsProgress.Up.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260406091000_RecalculateGoalsProgress\20260406091000_RecalculateGoalsProgress.Down.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.RecalculateGoalsProgress.20260406091000_RecalculateGoalsProgress.Down.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260419100000_RemoveGoalFilter\20260419100000_RemoveGoalFilter.Up.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.RemoveGoalFilter.20260419100000_RemoveGoalFilter.Up.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260419100000_RemoveGoalFilter\20260419100000_RemoveGoalFilter.Down.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.RemoveGoalFilter.20260419100000_RemoveGoalFilter.Down.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260419110000_RecalculateGoalProgressByGoalId\20260419110000_RecalculateGoalProgressByGoalId.Up.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.RecalculateGoalProgressByGoalId.20260419110000_RecalculateGoalProgressByGoalId.Up.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260419110000_RecalculateGoalProgressByGoalId\20260419110000_RecalculateGoalProgressByGoalId.Down.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.RecalculateGoalProgressByGoalId.20260419110000_RecalculateGoalProgressByGoalId.Down.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260419120000_FixCustomPeriodRecalculation\20260419120000_FixCustomPeriodRecalculation.Up.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.FixCustomPeriodRecalculation.20260419120000_FixCustomPeriodRecalculation.Up.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260419120000_FixCustomPeriodRecalculation\20260419120000_FixCustomPeriodRecalculation.Down.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.FixCustomPeriodRecalculation.20260419120000_FixCustomPeriodRecalculation.Down.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260419130000_FixCustomPeriodStartDate\20260419130000_FixCustomPeriodStartDate.Up.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.FixCustomPeriodStartDate.20260419130000_FixCustomPeriodStartDate.Up.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260419130000_FixCustomPeriodStartDate\20260419130000_FixCustomPeriodStartDate.Down.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.FixCustomPeriodStartDate.20260419130000_FixCustomPeriodStartDate.Down.sql</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
