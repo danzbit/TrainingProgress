@@ -22,6 +22,12 @@
     <EmbeddedResource Include="Migrations\20260315213000_GoalSqlOptimizations\20260315203657_GoalSqlOptimizations.Down.sql">
       <LogicalName>TrainingService.Infrastructure.Migrations.GoalSqlOptimizations.20260315203657_GoalSqlOptimizations.Down.sql</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260315235500_GoalProgressSnapshots\20260315235500_GoalProgressSnapshots.Up.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.GoalProgressSnapshots.20260315235500_GoalProgressSnapshots.Up.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\20260315235500_GoalProgressSnapshots\20260315235500_GoalProgressSnapshots.Down.sql">
+      <LogicalName>TrainingService.Infrastructure.Migrations.GoalProgressSnapshots.20260315235500_GoalProgressSnapshots.Down.sql</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\20260406091000_RecalculateGoalsProgress\20260406091000_RecalculateGoalsProgress.Up.sql">
       <LogicalName>TrainingService.Infrastructure.Migrations.RecalculateGoalsProgress.20260406091000_RecalculateGoalsProgress.Up.sql</LogicalName>
     </EmbeddedResource>

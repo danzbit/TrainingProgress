@@ -52,6 +52,7 @@ services:
 
   sqlserver-init:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-init
     depends_on:
       sqlserver:
         condition: service_healthy
